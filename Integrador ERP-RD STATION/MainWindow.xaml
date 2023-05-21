@@ -1,0 +1,21 @@
+﻿<Window x:Class="Integrador_ERP_RD_STATION.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:rd="clr-namespace:RdStationSharp;assembly=RdStationSharp"
+        xmlns:local="clr-namespace:Integrador_ERP_RD_STATION"
+        xmlns:rdstatus="clr-namespace:RdStationSharp.Status;assembly=RdStationSharp"
+        mc:Ignorable="d"
+        Title="Integrador ERP - RD STATION" Height="211.123" Width="589.868" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" Closing="Window_Closing" Icon="/Integrador RD.ico" Loaded="Window_Loaded" WindowState="Minimized" Closed="Window_Closed">
+    <Window.DataContext>
+        <rd:RDStationSharp/>
+    </Window.DataContext>
+    <Grid>
+        <TextBox Height="115" Margin="10,10,10,0" TextWrapping="Wrap" Text="{Binding Source={x:Static rdstatus:Status.Current}, Path=Message, Mode=OneWay}" VerticalAlignment="Top"/>
+        <ProgressBar Height="42" Margin="10,0,10.2,9.6" VerticalAlignment="Bottom" Value="{Binding Source={x:Static rdstatus:Status.Current}, Path=Progress, Mode=OneWay}" Maximum="{Binding Source={x:Static rdstatus:Status.Current}, Path=TotalProgress, Mode=OneWay}" ValueChanged="ProgressBar_ValueChanged"/>
+        <TextBlock HorizontalAlignment="Right" Margin="0,0,306,22" TextWrapping="Wrap" VerticalAlignment="Bottom" TextAlignment="Right" Text="{Binding Source={x:Static rdstatus:Status.Current}, Path=Progress, Mode=OneWay}"/>
+        <TextBlock HorizontalAlignment="Center" Margin="0,0,0,22" TextWrapping="Wrap" Text="de" VerticalAlignment="Bottom"/>
+        <TextBlock HorizontalAlignment="Left" Margin="306,0,0,22" TextWrapping="Wrap" VerticalAlignment="Bottom" Text="{Binding Source={x:Static rdstatus:Status.Current}, Path=TotalProgress, Mode=OneWay}"/>
+    </Grid>
+</Window>

@@ -1,0 +1,54 @@
+servidor:10.0.17.15
+nome da base: PBI_PRODUCAO
+usuario: PBI
+senha: @Ma*2015xyz
+
+SELECT 
+		C.CdCliente,
+		C.DsRazao as 'Razão Social',
+		C.CdFantasia as 'Fantasia', 
+		TC.DsDDD as DDD, 
+		TC.DsCidade as Cidade, 
+		TC.CdUf as UF,
+		C.DsEMail as 'E-mail',
+		case C.InStatus when 0 then 'Contato' when 1 then 'Ativo' else 'Inativo' END as 'Status', 
+		C.DtInclusao,
+		CM.CdAtividade AS Atividade, 
+		ATIV.DsAtividade AS [Descrição Atividade],
+		VWCLIENTE.TIPO_CONTA, ---- TIPO DE CONTA - (1-Lead; 2-Prospect; 3-Cliente)  
+		VWCLIENTE.QTDIASULTIMACOMPRA,
+		VWCLIENTE.QTCOMPRA,
+		VWCLIENTE.QTCOMPRAMESPASSADO
+FROM Clientes C
+	INNER JOIN TBCIDADE TC on C.CdCidade = TC.CdCidade
+	LEFT JOIN ClieMark CM (NOLOCK) ON CM.CdCliente = C.CdCliente
+	LEFT JOIN TBATIVID ATIV (NOLOCK) ON ATIV.CdAtividade = CM.CdAtividade
+	OUTER APPLY (SELECT TIPO_CONTA,QTDIASULTIMACOMPRA,QTCOMPRA,QTCOMPRAMESPASSADO FROM PBI_DIM_CLIENTES CW WHERE CW.CDCLIENTE = C.CdCliente) VWCLIENTE
+WHERE C.CdCliente > 4 and DsEMail is not null and DsEMail <> ''
+
+UNION ALL
+
+SELECT 
+		C.CdCliente,
+		C.DsRazao as 'Razão Social',
+		C.CdFantasia as 'Fantasia', 
+		TC.DsDDD as DDD, 
+		TC.DsCidade as Cidade, 
+		TC.CdUf as UF,
+		PESSOASCONTATO.EMAILCONTATO AS 'E-mail',
+		case C.InStatus when 0 then 'Contato' when 1 then 'Ativo' else 'Inativo' END as 'Status', 
+		C.DtInclusao,
+		CM.CdAtividade AS Atividade, 
+		ATIV.DsAtividade AS [Descrição Atividade],
+		VWCLIENTE.TIPO_CONTA, ---- TIPO DE CONTA - (1-Lead; 2-Prospect; 3-Cliente)  
+		VWCLIENTE.QTDIASULTIMACOMPRA,
+		VWCLIENTE.QTCOMPRA,
+		VWCLIENTE.QTCOMPRAMESPASSADO
+FROM Clientes C
+	OUTER APPLY (SELECT DSEMAIL AS EMAILCONTATO FROM PESSOASCONTATO P WHERE P.CDCLIENTE = C.CDCLIENTE AND DSEMAIL IS NOT NULL AND DsEMail <> '') AS PESSOASCONTATO
+	INNER JOIN TBCIDADE TC on C.CdCidade = TC.CdCidade
+	LEFT JOIN ClieMark CM (NOLOCK) ON CM.CdCliente = C.CdCliente
+	LEFT JOIN TBATIVID ATIV (NOLOCK) ON ATIV.CdAtividade = CM.CdAtividade
+	OUTER APPLY (SELECT TIPO_CONTA,QTDIASULTIMACOMPRA,QTCOMPRA,QTCOMPRAMESPASSADO FROM PBI_DIM_CLIENTES CW WHERE CW.CDCLIENTE = C.CdCliente) VWCLIENTE
+WHERE C.CdCliente > 4 and DsEMail is not null and DsEMail <> ''
+
